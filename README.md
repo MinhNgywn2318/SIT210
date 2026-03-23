@@ -1,26 +1,23 @@
-# Task 1.1P
-Switching ON Lights (Modular Programming Approach)
-Overview
+# Task 1.1P - Switching ON Lights
 
-This project implements a modular Arduino-based lighting system for a smart elderly care home.
-When a push button is pressed, two lights are activated:
+## Description
+This project uses an Arduino board, one push button, and two LEDs to simulate porch and hallway lights.
 
-  Porch Light → ON for 30 seconds
-  Hallway Light → ON for 60 seconds
+- Porch light stays ON for 30 seconds
+- Hallway light stays ON for 60 seconds
 
-The system is designed using modular programming principles to improve readability, maintainability, and scalability.
+## Files
+- Task1.1Lights_ON.ino: Arduino source code
+- README.md: project description and code overview
 
-Objectives:
-  Apply modular programming in embedded systems
-  Control multiple LEDs with different timing
-  Use a push button input
-  Implement non-blocking timing logic (millis)
+## Hardware
+- Arduino board
+- 2 LEDs
+- 2 resistors
+- 1 push button
+- Breadboard and jumper wires
 
-Hardware Requirements:
-  Arduino Nano 33 IoT
-  Breadboard
-  2 × LEDs (Porch & Hallway)
-  2 × Resistors (220Ω recommended)
-  1 × Push Button
-  Jumper wires
-  USB cable
+## Pin Connections
+- Button: D2
+- Porch LED: D5
+- Hallway LED: D6
