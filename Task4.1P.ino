@@ -1,46 +1,54 @@
-const int PIR_PIN = 6;
-const int LED1_PIN = 2;
-const int LED2_PIN = 3;
+const int pirPin = 2;
+const int switchPin = 3;
+const int led1Pin = 5;
+const int led2Pin = 6;
 
-volatile bool motionDetected = false;
+volatile bool pirEvent = false;
+volatile bool switchEvent = false;
+bool lightsOn = false;
 
 void pirISR() {
-  motionDetected = true;
+  pirEvent = true;
+}
+
+void switchISR() {
+  switchEvent = true;
 }
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
+  delay(2000);
 
-  pinMode(PIR_PIN, INPUT);
-  pinMode(LED1_PIN, OUTPUT);
-  pinMode(LED2_PIN, OUTPUT);
+  pinMode(pirPin, INPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+  pinMode(led1Pin, OUTPUT);
+  pinMode(led2Pin, OUTPUT);
 
-  digitalWrite(LED1_PIN, LOW);
-  digitalWrite(LED2_PIN, LOW);
+  digitalWrite(led1Pin, LOW);
+  digitalWrite(led2Pin, LOW);
 
-  attachInterrupt(digitalPinToInterrupt(PIR_PIN), pirISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(pirPin), pirISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(switchPin), switchISR, FALLING);
 
   Serial.println("System ready.");
-  Serial.println("Waiting for motion...");
 }
 
 void loop() {
-  if (motionDetected) {
-    motionDetected = false;
+  if (pirEvent) {
+    pirEvent = false;
+    lightsOn = !lightsOn;
+    digitalWrite(led1Pin, lightsOn);
+    digitalWrite(led2Pin, lightsOn);
+    Serial.println("PIR interrupt detected.");
+    delay(1000);
+  }
 
-    Serial.println("Motion detected by PIR interrupt.");
-    Serial.println("LED1 and LED2 turned ON.");
-
-    digitalWrite(LED1_PIN, HIGH);
-    digitalWrite(LED2_PIN, HIGH);
-
-    delay(5000);
-
-    digitalWrite(LED1_PIN, LOW);
-    digitalWrite(LED2_PIN, LOW);
-
-    Serial.println("LED1 and LED2 turned OFF.");
-    Serial.println("Waiting for motion...");
+  if (switchEvent) {
+    switchEvent = false;
+    lightsOn = !lightsOn;
+    digitalWrite(led1Pin, lightsOn);
+    digitalWrite(led2Pin, lightsOn);
+    Serial.println("Switch interrupt detected.");
+    delay(300);
   }
 }
