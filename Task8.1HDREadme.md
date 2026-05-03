@@ -62,8 +62,4 @@ A USB microphone was not available during testing. Therefore, text input was use
 
 The command processing, Raspberry Pi-to-Arduino communication, BH1750 light sensor reading, and LED/fan output control were successfully implemented and tested.
 
-## Video Demonstration
-Video link: [Paste your YouTube or Panopto link here]
 
-## Repository
-GitHub link: [Paste your GitHub folder link here]
