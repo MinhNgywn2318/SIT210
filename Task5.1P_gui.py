@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 # GPIO setup
 # =========================
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 LIVING_LED = 17
 BATHROOM_LED = 27
@@ -22,76 +23,117 @@ GPIO.output(CLOSET_LED, GPIO.LOW)
 # =========================
 # Functions
 # =========================
+def update_lights():
+    if living_var.get():
+        GPIO.output(LIVING_LED, GPIO.HIGH)
+    else:
+        GPIO.output(LIVING_LED, GPIO.LOW)
+
+    if bathroom_var.get():
+        GPIO.output(BATHROOM_LED, GPIO.HIGH)
+    else:
+        GPIO.output(BATHROOM_LED, GPIO.LOW)
+
+    if closet_var.get():
+        GPIO.output(CLOSET_LED, GPIO.HIGH)
+    else:
+        GPIO.output(CLOSET_LED, GPIO.LOW)
+
+    selected = []
+    if living_var.get():
+        selected.append("Living Room")
+    if bathroom_var.get():
+        selected.append("Bathroom")
+    if closet_var.get():
+        selected.append("Closet")
+
+    if selected:
+        status_label.config(text="ON: " + ", ".join(selected))
+    else:
+        status_label.config(text="All lights are OFF")
+
+
 def turn_off_all():
+    living_var.set(False)
+    bathroom_var.set(False)
+    closet_var.set(False)
+
     GPIO.output(LIVING_LED, GPIO.LOW)
     GPIO.output(BATHROOM_LED, GPIO.LOW)
     GPIO.output(CLOSET_LED, GPIO.LOW)
 
-def select_room():
-    room = selected_room.get()
-    turn_off_all()
+    status_label.config(text="All lights are OFF")
 
-    if room == "Living Room":
-        GPIO.output(LIVING_LED, GPIO.HIGH)
-        status_label.config(text="Living Room light is ON")
-    elif room == "Bathroom":
-        GPIO.output(BATHROOM_LED, GPIO.HIGH)
-        status_label.config(text="Bathroom light is ON")
-    elif room == "Closet":
-        GPIO.output(CLOSET_LED, GPIO.HIGH)
-        status_label.config(text="Closet light is ON")
+
+def turn_on_all():
+    living_var.set(True)
+    bathroom_var.set(True)
+    closet_var.set(True)
+
+    GPIO.output(LIVING_LED, GPIO.HIGH)
+    GPIO.output(BATHROOM_LED, GPIO.HIGH)
+    GPIO.output(CLOSET_LED, GPIO.HIGH)
+
+    status_label.config(text="All lights are ON")
+
 
 def close_program():
     turn_off_all()
     GPIO.cleanup()
     root.destroy()
 
+
 # =========================
 # GUI setup
 # =========================
 root = tk.Tk()
 root.title("Smart Home Light Control")
-root.geometry("380x280")
+root.geometry("400x350")
 root.resizable(False, False)
 
-title_label = ttk.Label(root, text="Select a Room Light", font=("Arial", 16))
+title_label = ttk.Label(root, text="Select Room Lights", font=("Arial", 16))
 title_label.pack(pady=15)
 
-selected_room = tk.StringVar(value="")
+living_var = tk.BooleanVar(value=False)
+bathroom_var = tk.BooleanVar(value=False)
+closet_var = tk.BooleanVar(value=False)
 
-living_radio = ttk.Radiobutton(
+living_check = ttk.Checkbutton(
     root,
     text="Living Room",
-    variable=selected_room,
-    value="Living Room",
-    command=select_room
+    variable=living_var,
+    command=update_lights
 )
-living_radio.pack(pady=5)
+living_check.pack(pady=5)
 
-bathroom_radio = ttk.Radiobutton(
+bathroom_check = ttk.Checkbutton(
     root,
     text="Bathroom",
-    variable=selected_room,
-    value="Bathroom",
-    command=select_room
+    variable=bathroom_var,
+    command=update_lights
 )
-bathroom_radio.pack(pady=5)
+bathroom_check.pack(pady=5)
 
-closet_radio = ttk.Radiobutton(
+closet_check = ttk.Checkbutton(
     root,
     text="Closet",
-    variable=selected_room,
-    value="Closet",
-    command=select_room
+    variable=closet_var,
+    command=update_lights
 )
-closet_radio.pack(pady=5)
+closet_check.pack(pady=5)
 
-status_label = ttk.Label(root, text="No room selected")
+status_label = ttk.Label(root, text="All lights are OFF")
 status_label.pack(pady=15)
+
+all_on_button = ttk.Button(root, text="Turn All ON", command=turn_on_all)
+all_on_button.pack(pady=5)
+
+all_off_button = ttk.Button(root, text="Turn All OFF", command=turn_off_all)
+all_off_button.pack(pady=5)
 
 exit_button = ttk.Button(root, text="Exit", command=close_program)
 exit_button.pack(pady=15)
 
 root.protocol("WM_DELETE_WINDOW", close_program)
 
-root.mainloop(
+root.mainloop()
