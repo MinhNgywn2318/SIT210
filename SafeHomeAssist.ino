@@ -14,7 +14,7 @@ const char* MQTT_CLIENT   = "arduino_safehome";
 const char* TOPIC_SENSOR  = "safehome/sensor";
 const char* TOPIC_ALERT   = "safehome/alert";
 
-const float LUX_THRESHOLD = 50.0;
+const float LUX_THRESHOLD = 40.0;
 const int   LOOP_DELAY    = 2000;
 const int   MAX_RETRIES   = 3;
 const int   WIFI_TIMEOUT  = 10000;
